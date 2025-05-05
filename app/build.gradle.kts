@@ -2,6 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.dagger.hilt.android)
+    alias(libs.plugins.jetbrains.kotlin.kapt)
+    alias(libs.plugins.kotlin.plugin.serialization)
 }
 
 android {
@@ -56,4 +59,27 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(libs.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
+
+    ///Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+
+    //Dagger hilt
+    implementation (libs.dagger.hilt)
+    kapt(libs.dagger.hilt.compiler)
+    implementation(libs.hilt.navigation.compose)
+
+    //Coil
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
+
+    implementation(libs.logging.interceptor)
+
+    //Testing
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockk)
+    testImplementation (libs.turbine)
 }
