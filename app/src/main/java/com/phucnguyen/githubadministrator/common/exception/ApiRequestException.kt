@@ -1,3 +1,8 @@
 package com.phucnguyen.githubadministrator.common.exception
 
-class ApiRequestException() : Exception()
+import com.phucnguyen.githubadministrator.core.data.remote.ErrorResponse
+
+class ApiRequestException(
+    val code: Int,
+    val body: ErrorResponse
+) : Exception()

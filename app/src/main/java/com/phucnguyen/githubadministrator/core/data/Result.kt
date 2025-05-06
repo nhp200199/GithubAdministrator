@@ -4,7 +4,7 @@ sealed class Result<out T : Any, out E: Any> {
     /**
      * Success response with body
      */
-    data class Success<T : Any>(val body: T) : Result<T, Nothing>()
+    data class Success<T : Any>(val data: T) : Result<T, Nothing>()
 
     /**
      * Failure response with body
@@ -16,7 +16,7 @@ sealed class Result<out T : Any, out E: Any> {
     override fun toString(): String {
         return when(this) {
             is ApiError -> "ApiError[code=$code]"
-            is Success -> "Success[body=$body]"
+            is Success -> "Success[body=$data]"
             is OperationError -> "OperationError[exception=${exception.message}]"
         }
     }

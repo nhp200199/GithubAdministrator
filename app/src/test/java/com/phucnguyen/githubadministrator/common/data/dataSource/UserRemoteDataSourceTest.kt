@@ -4,6 +4,7 @@ import com.phucnguyen.githubadministrator.common.exception.NoNetworkConnectionEx
 import com.phucnguyen.githubadministrator.common.exception.UnknownException
 import com.phucnguyen.githubadministrator.core.data.Result
 import com.phucnguyen.githubadministrator.core.data.remote.ErrorResponse
+import com.phucnguyen.githubadministrator.core.data.remote.model.NetworkResponse
 import com.phucnguyen.githubadministrator.core.data.remote.service.IUserService
 import com.phucnguyen.githubadministrator.dataTest.USER_DTO
 import com.phucnguyen.githubadministrator.dataTest.USER_LIST_DTO
@@ -12,6 +13,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import okhttp3.Headers
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.CoreMatchers.`is`
@@ -39,7 +41,7 @@ class UserRemoteDataSourceTest {
         val sinceSlot = slot<Int>()
         val perPageSlot = slot<Int>()
         coEvery { userService.getUsers(capture(sinceSlot), capture(perPageSlot)) }
-            .returns(Result.Success(USER_LIST_DTO)
+            .returns(Result.Success(NetworkResponse(Headers.headersOf(), USER_LIST_DTO))
             )
 
         SUT.getUsers(PARAM_SINCE, PARAM_PAGE_LIMIT)
@@ -51,7 +53,7 @@ class UserRemoteDataSourceTest {
     @Test
     fun getUsers_success_userListReturned() = runTest {
         coEvery { userService.getUsers(any(), any()) }
-            .returns(Result.Success(USER_LIST_DTO)
+            .returns(Result.Success(NetworkResponse(Headers.headersOf(), USER_LIST_DTO))
             )
 
         val result = SUT.getUsers(PARAM_SINCE, PARAM_PAGE_LIMIT)
@@ -91,7 +93,7 @@ class UserRemoteDataSourceTest {
     fun getUsers_correctUserNamePassed() = runTest {
         val userNameSlot = slot<String>()
         coEvery { userService.getUserDetail(capture(userNameSlot)) }
-            .returns(Result.Success(USER_DTO)
+            .returns(Result.Success(NetworkResponse(Headers.headersOf(), USER_DTO))
             )
 
         SUT.getUserDetail(PARAM_USER_NAME)
@@ -102,7 +104,7 @@ class UserRemoteDataSourceTest {
     @Test
     fun getUserDetail_success_userDetailReturned() = runTest {
         coEvery { userService.getUserDetail(any()) }
-            .returns(Result.Success(USER_DTO)
+            .returns(Result.Success(NetworkResponse(Headers.headersOf(), USER_DTO))
             )
 
         val result = SUT.getUserDetail(PARAM_USER_NAME)

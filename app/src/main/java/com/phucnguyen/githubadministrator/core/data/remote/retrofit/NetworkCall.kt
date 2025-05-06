@@ -3,6 +3,7 @@ package com.phucnguyen.githubadministrator.core.data.remote.retrofit
 import com.phucnguyen.githubadministrator.common.exception.NoNetworkConnectionException
 import com.phucnguyen.githubadministrator.common.exception.UnknownException
 import com.phucnguyen.githubadministrator.core.data.Result
+import com.phucnguyen.githubadministrator.core.data.remote.model.NetworkResponse
 import okhttp3.Request
 import okhttp3.ResponseBody
 import okio.Timeout
@@ -15,17 +16,21 @@ import java.io.IOException
 class NetworkCall<T: Any, E: Any>(
     private val delegate: Call<T>,
     private val errorConverter: Converter<ResponseBody, E>
-) : Call<Result<T, E>> {
-    override fun enqueue(callback: Callback<Result<T, E>>) {
+) : Call<Result<NetworkResponse<T>, E>> {
+    override fun enqueue(callback: Callback<Result<NetworkResponse<T>, E>>) {
          delegate.enqueue(object : Callback<T> {
             override fun onResponse(call: Call<T>, response: Response<T>) {
                 val body = response.body()
                 val code = response.code()
                 val error = response.errorBody()
+                val headers = response.headers()
 
                 if (response.isSuccessful) {
                     if (body != null) {
-                        callback.onResponse(this@NetworkCall, Response.success(Result.Success(body)))
+                        callback.onResponse(
+                            this@NetworkCall,
+                            Response.success(Result.Success(NetworkResponse(headers, body)))
+                        )
                     }
                     //`else` is optional here. Because there are cases where successful request
                     //does not return anything, just success code, eg: 201
@@ -64,11 +69,11 @@ class NetworkCall<T: Any, E: Any>(
         })
     }
 
-    override fun clone(): Call<Result<T, E>> {
+    override fun clone(): Call<Result<NetworkResponse<T>, E>> {
         return NetworkCall(delegate.clone(), errorConverter)
     }
 
-    override fun execute(): Response<Result<T, E>> = throw UnsupportedOperationException("MyCall doesn't support execute()")
+    override fun execute(): Response<Result<NetworkResponse<T>, E>> = throw UnsupportedOperationException("MyCall doesn't support execute()")
 
     override fun isExecuted(): Boolean = delegate.isExecuted
 
