@@ -63,6 +63,10 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
 
+    //Paging
+    implementation (libs.paging3 )
+    implementation (libs.paging.compose)
+
     ///Retrofit
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)

@@ -10,7 +10,7 @@ class UserRemoteDataSource(
     private val userService: IUserService
 ) : IUserRemoteDataSource {
     override suspend fun getUsers(
-        since: Long,
+        since: Int,
         perPage: Int
     ): Result<List<UserOverview>, ErrorResponse> {
         val result = userService.getUsers(since, perPage)

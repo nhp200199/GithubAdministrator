@@ -9,7 +9,7 @@ import retrofit2.http.Query
 
 interface IUserService {
     @GET("users")
-    suspend fun getUsers(@Query("since") since: Long, @Query("per_page") perPage: Int): Result<List<UserDTO>, ErrorResponse>
+    suspend fun getUsers(@Query("since") since: Int, @Query("per_page") perPage: Int): Result<List<UserDTO>, ErrorResponse>
     @GET("user/{userName}")
     suspend fun getUserDetail(@Path("userName") userName: String): Result<UserDTO, ErrorResponse>
 }

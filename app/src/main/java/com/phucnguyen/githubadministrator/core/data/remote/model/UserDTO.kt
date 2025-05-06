@@ -6,7 +6,7 @@ import kotlinx.serialization.SerialName
 
 data class UserDTO(
     @SerialName("id")
-    val id: Long,
+    val id: Int,
     @SerialName("login")
     val userName: String,
     @SerialName("avatar_url")

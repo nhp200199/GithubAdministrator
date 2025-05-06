@@ -7,7 +7,7 @@ import com.phucnguyen.githubadministrator.core.data.remote.ErrorResponse
 
 interface IUserRemoteDataSource {
     suspend fun getUsers(
-        since: Long = 0,
+        since: Int = 0,
         perPage: Int = 20
     ): Result<List<UserOverview>, ErrorResponse>
 

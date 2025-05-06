@@ -21,7 +21,7 @@ import org.junit.Test
 
 @ExperimentalCoroutinesApi
 class UserRemoteDataSourceTest {
-    private val PARAM_SINCE = 0L
+    private val PARAM_SINCE = 0
     private val PARAM_PAGE_LIMIT = 20
     private val PARAM_USER_NAME = "test"
 
@@ -36,7 +36,7 @@ class UserRemoteDataSourceTest {
 
     @Test
     fun getUsers_correctParametersPassed() = runTest {
-        val sinceSlot = slot<Long>()
+        val sinceSlot = slot<Int>()
         val perPageSlot = slot<Int>()
         coEvery { userService.getUsers(capture(sinceSlot), capture(perPageSlot)) }
             .returns(Result.Success(USER_LIST_DTO)

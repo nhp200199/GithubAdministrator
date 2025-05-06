@@ -19,6 +19,7 @@ ok-http3 = "4.12.0"
 coil = "3.0.4"
 turbine = "1.2.0"
 kotlinxCoroutinesTest = "1.7.1"
+paging3 = "3.3.6"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -42,6 +43,10 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
 
 logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "ok-http3" }
+
+#Paging
+paging3 = { group = "androidx.paging", name = "paging-runtime", version.ref = "paging3" }
+paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging3" }
 
 #Coil
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
