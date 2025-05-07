@@ -8,7 +8,6 @@ import com.phucnguyen.githubadministrator.common.data.paging.UserPagingSource
 import com.phucnguyen.githubadministrator.common.model.UserDetail
 import com.phucnguyen.githubadministrator.common.model.UserOverview
 import com.phucnguyen.githubadministrator.core.data.ResultData
-import com.phucnguyen.githubadministrator.core.data.remote.ErrorResponse
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -30,7 +29,7 @@ class UserRepository @Inject constructor(
         val result = userRemoteDataSource.getUserDetail(userName)
 
         return when (result) {
-            is ResultData.Success -> ResultData.Success(result.data)
+            is ResultData.Success -> ResultData.Success(result.data.body)
             is ResultData.ApiError -> result
             is ResultData.OperationError -> result
         }

@@ -3,6 +3,7 @@ package com.phucnguyen.githubadministrator.common.utils
 import com.phucnguyen.githubadministrator.common.exception.NoNetworkConnectionException
 import com.phucnguyen.githubadministrator.common.exception.UnknownException
 import com.phucnguyen.githubadministrator.core.data.ResultData
+import com.phucnguyen.githubadministrator.core.data.remote.model.NetworkResponse
 import retrofit2.Response
 import java.io.IOException
 
@@ -33,12 +34,12 @@ fun extractNextSinceParameter(linkHeader: String?): Int? {
 }
 
 // Safe API call handler with suspend
-suspend fun <T: Any> safeApiCall(apiCall: suspend () -> Response<T>): ResultData<T> {
+suspend fun <T: Any> safeApiCall(apiCall: suspend () -> Response<T>): ResultData<NetworkResponse<T>> {
     return try {
         val response = apiCall()
         when {
             response.isSuccessful -> {
-                response.body()?.let { ResultData.Success(it) }
+                response.body()?.let { ResultData.Success(NetworkResponse(response.headers(), it)) }
                     ?: ResultData.ApiError("Empty response body", response.code())
             }
             else -> ResultData.ApiError(response.message(), response.code())

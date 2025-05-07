@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.phucnguyen.githubadministrator.features.userDetail.UserDetailVM
+import com.phucnguyen.githubadministrator.features.userList.UserListScreenVM
 
 @Composable
 fun GithubAdministratorNavGraph() {
@@ -12,10 +13,14 @@ fun GithubAdministratorNavGraph() {
 
     NavHost(
         navController = navController,
-        startDestination = UserDetail
+        startDestination = UserList
     ) {
         composable<UserDetail> {
             UserDetailVM()
+        }
+
+        composable<UserList> {
+            UserListScreenVM()
         }
     }
 }
