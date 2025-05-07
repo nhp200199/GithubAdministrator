@@ -1,10 +1,12 @@
 package com.phucnguyen.githubadministrator.common.data.dataSource
 
+import android.util.Log
 import com.phucnguyen.githubadministrator.common.model.UserDetail
 import com.phucnguyen.githubadministrator.common.model.UserOverview
-import com.phucnguyen.githubadministrator.core.data.Result
+import com.phucnguyen.githubadministrator.common.utils.safeApiCall
+import com.phucnguyen.githubadministrator.core.data.ResultData
 import com.phucnguyen.githubadministrator.core.data.remote.ErrorResponse
-import com.phucnguyen.githubadministrator.core.data.remote.model.NetworkResponse
+import com.phucnguyen.githubadministrator.core.data.remote.model.UserDTO
 import com.phucnguyen.githubadministrator.core.data.remote.service.IUserService
 import javax.inject.Inject
 
@@ -14,34 +16,38 @@ class UserRemoteDataSource @Inject constructor(
     override suspend fun getUsers(
         since: Int,
         perPage: Int
-    ): Result<NetworkResponse<List<UserOverview>>, ErrorResponse> {
-        val result = userService.getUsers(since, perPage)
+    ): ResultData<List<UserOverview>> {
+        val result = safeApiCall { userService.getUsers(since, perPage) }
 
         //TODO: handle 304 code
         return when (result) {
-            is Result.Success -> Result.Success(
-                NetworkResponse(
-                    result.data.header,
-                    result.data.body.map { it.toUserOverview() }
-                )
+            is ResultData.Success -> ResultData.Success(
+//                NetworkResponse(
+//                    result.data.header,
+//                    result.data.body.map { it.toUserOverview() }
+//                )
+                result.data.map { it.toUserOverview() }
             )
-            is Result.ApiError -> result
-            is Result.OperationError -> result
+            is ResultData.ApiError -> result
+            is ResultData.OperationError -> result
         }
     }
 
-    override suspend fun getUserDetail(userName: String): Result<NetworkResponse<UserDetail>, ErrorResponse> {
-        val result = userService.getUserDetail(userName)
+    override suspend fun getUserDetail(userName: String): ResultData<UserDetail> {
+        val result = safeApiCall { userService.getUserDetail(userName) }
+        Log.d("Phuc", "getUserDetail: $result")
 
         return when (result) {
-            is Result.Success -> Result.Success(
-                NetworkResponse(
-                    result.data.header,
-                    result.data.body.toUserDetail()
-                )
+            is ResultData.Success -> ResultData.Success(
+//                NetworkResponse(
+//                    result.data.header,
+//                    result.data.body.toUserDetail()
+//                )
+
+                result.data.toUserDetail()
             )
-            is Result.ApiError -> result
-            is Result.OperationError -> result
+            is ResultData.ApiError -> result
+            is ResultData.OperationError -> result
         }
     }
 }

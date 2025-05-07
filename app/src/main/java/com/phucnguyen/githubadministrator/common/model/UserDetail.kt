@@ -5,5 +5,7 @@ data class UserDetail(
     val userName: String,
     val avatarUrl: String,
     val landingPageUrl: String,
-    val name: String,
+    val location: String,
+    val followers: Int,
+    val following: Int,
 )

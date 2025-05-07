@@ -1,7 +1,6 @@
 package com.phucnguyen.githubadministrator.common.di
 
 import android.content.Context
-import com.phucnguyen.githubadministrator.core.data.remote.retrofit.NetworkAdapterFactory
 import com.phucnguyen.githubadministrator.core.data.remote.retrofit.NetworkMonitorInterceptor
 import com.phucnguyen.githubadministrator.core.data.remote.service.IUserService
 import com.phucnguyen.githubadministrator.core.networkManager.NetworkManager
@@ -29,7 +28,7 @@ abstract class ApiModule {
             .baseUrl("https://api.github.com/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(NetworkAdapterFactory())
+//            .addCallAdapterFactory(NetworkAdapterFactory())
             .build()
 
         @Provides

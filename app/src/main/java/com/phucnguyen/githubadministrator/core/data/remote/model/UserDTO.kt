@@ -1,31 +1,39 @@
 package com.phucnguyen.githubadministrator.core.data.remote.model
 
+import com.google.gson.annotations.SerializedName
 import com.phucnguyen.githubadministrator.common.model.UserDetail
 import com.phucnguyen.githubadministrator.common.model.UserOverview
-import kotlinx.serialization.SerialName
 
 data class UserDTO(
-    @SerialName("id")
+    @SerializedName("id")
     val id: Int,
-    @SerialName("login")
-    val userName: String,
-    @SerialName("avatar_url")
-    val avatarUrl: String,
-    @SerialName("html_url")
-    val landingPageUrl: String
+    @SerializedName("login")
+    val login: String?,
+    @SerializedName("avatar_url")
+    val avatarUrl: String?,
+    @SerializedName("html_url")
+    val landingPageUrl: String?,
+    @SerializedName("location")
+    val location: String?,
+    @SerializedName("followers")
+    val followers: Int?,
+    @SerializedName("following")
+    val following: Int?,
 ) {
     fun toUserOverview() = UserOverview(
         id = id,
-        userName = userName,
-        avatarUrl = avatarUrl,
-        landingPageUrl = landingPageUrl
+        userName = login ?: "",
+        avatarUrl = avatarUrl ?: "",
+        landingPageUrl = landingPageUrl ?: ""
     )
 
     fun toUserDetail() = UserDetail(
         id = id,
-        userName = userName,
-        avatarUrl = avatarUrl,
-        landingPageUrl = landingPageUrl,
-        name = ""
+        userName = login ?: "",
+        avatarUrl = avatarUrl ?: "",
+        landingPageUrl = landingPageUrl ?: "",
+        location = location ?: "",
+        followers = followers ?: 0,
+        following = following ?: 0
     )
 }

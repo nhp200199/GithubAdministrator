@@ -7,7 +7,7 @@ import com.phucnguyen.githubadministrator.common.data.dataSource.IUserRemoteData
 import com.phucnguyen.githubadministrator.common.data.paging.UserPagingSource
 import com.phucnguyen.githubadministrator.common.model.UserDetail
 import com.phucnguyen.githubadministrator.common.model.UserOverview
-import com.phucnguyen.githubadministrator.core.data.Result
+import com.phucnguyen.githubadministrator.core.data.ResultData
 import com.phucnguyen.githubadministrator.core.data.remote.ErrorResponse
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -26,13 +26,13 @@ class UserRepository @Inject constructor(
         ).flow
     }
 
-    override suspend fun getUserDetail(userName: String): Result<UserDetail, ErrorResponse> {
+    override suspend fun getUserDetail(userName: String): ResultData<UserDetail> {
         val result = userRemoteDataSource.getUserDetail(userName)
 
         return when (result) {
-            is Result.Success -> Result.Success(result.data.body)
-            is Result.ApiError -> result
-            is Result.OperationError -> result
+            is ResultData.Success -> ResultData.Success(result.data)
+            is ResultData.ApiError -> result
+            is ResultData.OperationError -> result
         }
     }
 }

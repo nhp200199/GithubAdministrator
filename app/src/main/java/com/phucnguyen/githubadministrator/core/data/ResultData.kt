@@ -1,17 +1,17 @@
 package com.phucnguyen.githubadministrator.core.data
 
-sealed class Result<out T : Any, out E: Any> {
+sealed class ResultData<out T : Any> {
     /**
      * Success response with body
      */
-    data class Success<T : Any>(val data: T) : Result<T, Nothing>()
+    data class Success<T : Any>(val data: T) : ResultData<T>()
 
     /**
      * Failure response with body
      */
-    data class ApiError<E: Any>(val body: E, val code: Int?) : Result<Nothing, E>()
+    data class ApiError(val message: String, val code: Int?) : ResultData<Nothing>()
 
-    data class OperationError(val exception: Exception): Result<Nothing, Nothing>()
+    data class OperationError(val exception: Exception): ResultData<Nothing>()
 
     override fun toString(): String {
         return when(this) {

@@ -5,8 +5,7 @@ import androidx.paging.PagingState
 import com.phucnguyen.githubadministrator.common.data.dataSource.IUserRemoteDataSource
 import com.phucnguyen.githubadministrator.common.exception.ApiRequestException
 import com.phucnguyen.githubadministrator.common.model.UserOverview
-import com.phucnguyen.githubadministrator.common.utils.extractNextSinceParameter
-import com.phucnguyen.githubadministrator.core.data.Result
+import com.phucnguyen.githubadministrator.core.data.ResultData
 import javax.inject.Inject
 
 class UserPagingSource @Inject constructor(
@@ -22,19 +21,19 @@ class UserPagingSource @Inject constructor(
 
         val result = userRemoteDataSource.getUsers(since = since)
         return when (result) {
-            is Result.ApiError -> LoadResult.Error(
-                ApiRequestException(result.code!!, result.body)
+            is ResultData.ApiError -> LoadResult.Error(
+                ApiRequestException(result.code!!, result.message)
             )
-            is Result.OperationError -> LoadResult.Error(
+            is ResultData.OperationError -> LoadResult.Error(
                 result.exception
             )
-            is Result.Success -> {
-                val next = extractNextSinceParameter(result.data.header["links"])
+            is ResultData.Success -> {
+//                val next = extractNextSinceParameter(result.data.header["links"])
 
                 LoadResult.Page(
-                    data = result.data.body,
+                    data = result.data,
                     prevKey = null, // because we only paging forward
-                    nextKey = next
+                    nextKey = 12
                 )
             }
         }

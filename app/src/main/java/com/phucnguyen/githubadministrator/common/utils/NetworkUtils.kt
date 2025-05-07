@@ -1,5 +1,11 @@
 package com.phucnguyen.githubadministrator.common.utils
 
+import com.phucnguyen.githubadministrator.common.exception.NoNetworkConnectionException
+import com.phucnguyen.githubadministrator.common.exception.UnknownException
+import com.phucnguyen.githubadministrator.core.data.ResultData
+import retrofit2.Response
+import java.io.IOException
+
 fun extractNextSinceParameter(linkHeader: String?): Int? {
     if (linkHeader == null) return null
 
@@ -24,4 +30,44 @@ fun extractNextSinceParameter(linkHeader: String?): Int? {
     }
     // Return null if the "next" link or "since" parameter is not found
     return null
+}
+
+// Safe API call handler with suspend
+suspend fun <T: Any> safeApiCall(apiCall: suspend () -> Response<T>): ResultData<T> {
+    return try {
+        val response = apiCall()
+        when {
+            response.isSuccessful -> {
+                response.body()?.let { ResultData.Success(it) }
+                    ?: ResultData.ApiError("Empty response body", response.code())
+            }
+            else -> ResultData.ApiError(response.message(), response.code())
+        }
+    } catch (exception: Throwable) {
+        handleApiError(exception)
+    }
+}
+
+// Exception handling with detailed Resource.Error
+private fun <T: Any> handleApiError(exception: Throwable): ResultData<T> {
+    return when (exception) {
+//        is TimeoutException -> "Request timed out. Please try again."
+        is IOException -> ResultData.OperationError(NoNetworkConnectionException())
+//        is HttpException -> {
+//            val statusCode = exception.code()
+//            when (statusCode) {
+//                400 -> "Bad Request"
+//                401 -> "Unauthorized. Please check your credentials."
+//                403 -> "Forbidden. Access is denied."
+//                404 -> "Resource not found."
+//                500 -> "Internal Server Error. Please try again later."
+//                503 -> "Service Unavailable. Please try again later."
+//                else -> "Unexpected HTTP Error: $statusCode"
+//            }
+//        }
+//        is JsonParseException, is MalformedJsonException -> "Malformed JSON received. Parsing failed."
+//        is IllegalArgumentException -> "Invalid argument provided. ${exception.message}"
+//        is IllegalStateException -> "Illegal application state. ${exception.message}"
+        else -> ResultData.OperationError(UnknownException())
+    }
 }
