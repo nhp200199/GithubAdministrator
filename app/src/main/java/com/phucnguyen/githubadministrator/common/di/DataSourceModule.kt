@@ -1,7 +1,9 @@
 package com.phucnguyen.githubadministrator.common.di
 
-import com.phucnguyen.githubadministrator.common.data.dataSource.IUserRemoteDataSource
-import com.phucnguyen.githubadministrator.common.data.dataSource.UserRemoteDataSource
+import com.phucnguyen.githubadministrator.common.data.dataSource.local.IUserLocalDataSource
+import com.phucnguyen.githubadministrator.common.data.dataSource.local.UserLocalDataSource
+import com.phucnguyen.githubadministrator.common.data.dataSource.remote.IUserRemoteDataSource
+import com.phucnguyen.githubadministrator.common.data.dataSource.remote.UserRemoteDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -14,4 +16,9 @@ abstract class DataSourceModule {
     abstract fun bindUserRemoteDataSource(
         userRemoteDataSource: UserRemoteDataSource
     ): IUserRemoteDataSource
+
+    @Binds
+    abstract fun bindUserLocalDataSource(
+        userLocalDataSource: UserLocalDataSource
+    ): IUserLocalDataSource
 }

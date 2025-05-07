@@ -1,4 +1,4 @@
-package com.phucnguyen.githubadministrator.common.data.dataSource
+package com.phucnguyen.githubadministrator.common.data.dataSource.remote
 
 import com.phucnguyen.githubadministrator.common.model.UserDetail
 import com.phucnguyen.githubadministrator.common.model.UserOverview

@@ -1,6 +1,7 @@
 package com.phucnguyen.githubadministrator.features.userList
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -39,19 +40,22 @@ import com.phucnguyen.githubadministrator.dataTest.USER_LIST_MODEL
 
 @Composable
 fun UserListScreenVM(
-    viewModel: UserListViewModel = hiltViewModel()
+    onNavigateToDetail: (String) -> Unit,
+    viewModel: UserListViewModel = hiltViewModel(),
 ) {
     val userPagingState = viewModel.usersPaginatedFlow.collectAsLazyPagingItems()
 
-    UserListScreen(userPagingState)
+    UserListScreen(
+        userPagingState = userPagingState,
+        onNavigateToDetail = onNavigateToDetail
+    )
 }
 
 @Composable
 fun UserListScreen(
-    userPagingState: LazyPagingItems<UserOverview>
+    userPagingState: LazyPagingItems<UserOverview>,
+    onNavigateToDetail: (String) -> Unit
 ) {
-//    val users = USER_LIST_MODEL
-
     LazyColumn(
         contentPadding = PaddingValues(
             8.dp
@@ -70,6 +74,7 @@ fun UserListScreen(
                         containerColor = Color.White
                     ),
                     modifier = Modifier
+                        .clickable { onNavigateToDetail(user.userName) }
                 ) {
                     Row(
                         modifier = Modifier

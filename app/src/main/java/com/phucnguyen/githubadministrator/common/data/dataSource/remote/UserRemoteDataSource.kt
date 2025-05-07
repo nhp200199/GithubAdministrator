@@ -1,6 +1,5 @@
-package com.phucnguyen.githubadministrator.common.data.dataSource
+package com.phucnguyen.githubadministrator.common.data.dataSource.remote
 
-import android.util.Log
 import com.phucnguyen.githubadministrator.common.model.UserDetail
 import com.phucnguyen.githubadministrator.common.model.UserOverview
 import com.phucnguyen.githubadministrator.common.utils.safeApiCall

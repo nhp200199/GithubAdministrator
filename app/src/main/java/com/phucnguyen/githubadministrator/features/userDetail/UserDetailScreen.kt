@@ -45,10 +45,11 @@ import com.phucnguyen.githubadministrator.dataTest.USER_DETAIL_MODEL
 
 @Composable
 fun UserDetailVM(
+    userName: String,
     viewModel: UserDetailViewModel = hiltViewModel()
 ) {
     LaunchedEffect(Unit) {
-        viewModel.getUserDetail("CapnKiefer")
+        viewModel.getUserDetail(userName)
     }
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

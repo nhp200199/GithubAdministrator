@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.phucnguyen.githubadministrator.features.userDetail.UserDetailVM
 import com.phucnguyen.githubadministrator.features.userList.UserListScreenVM
 
@@ -15,12 +16,19 @@ fun GithubAdministratorNavGraph() {
         navController = navController,
         startDestination = UserList
     ) {
-        composable<UserDetail> {
-            UserDetailVM()
+        composable<UserDetail> { backStackEntry ->
+            val userDetail = backStackEntry.toRoute<UserDetail>()
+            UserDetailVM(
+                userName = userDetail.userName
+            )
         }
 
         composable<UserList> {
-            UserListScreenVM()
+            UserListScreenVM(
+                onNavigateToDetail = {
+                    navController.navigate(UserDetail(it))
+                }
+            )
         }
     }
 }

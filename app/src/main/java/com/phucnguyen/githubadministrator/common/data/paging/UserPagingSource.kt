@@ -2,7 +2,7 @@ package com.phucnguyen.githubadministrator.common.data.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.phucnguyen.githubadministrator.common.data.dataSource.IUserRemoteDataSource
+import com.phucnguyen.githubadministrator.common.data.dataSource.remote.IUserRemoteDataSource
 import com.phucnguyen.githubadministrator.common.exception.ApiRequestException
 import com.phucnguyen.githubadministrator.common.model.UserOverview
 import com.phucnguyen.githubadministrator.common.utils.extractNextSinceParameter

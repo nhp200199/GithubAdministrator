@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.jetbrains.kotlin.kapt)
     alias(libs.plugins.kotlin.plugin.serialization)
+    alias(libs.plugins.kotlin.ksp)
 }
 
 android {
@@ -62,6 +63,11 @@ dependencies {
 
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
+
+    //Room database
+    implementation (libs.room.runtime)
+    implementation (libs.room.ktx)
+    ksp(libs.room.compiler)
 
     //Paging
     implementation (libs.paging3 )
