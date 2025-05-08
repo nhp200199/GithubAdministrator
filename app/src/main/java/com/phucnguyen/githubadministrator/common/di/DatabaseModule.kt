@@ -9,11 +9,13 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
     @Provides
+    @Singleton
     fun provideDatabase(@ApplicationContext context: Context): GithubAdminDatabase {
         return Room.databaseBuilder(
             context.applicationContext,
@@ -23,6 +25,7 @@ object DatabaseModule {
     }
 
     @Provides
+    @Singleton
     fun provideUserDao(database: GithubAdminDatabase): UserDao {
         return database.userDao()
     }

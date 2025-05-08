@@ -1,5 +1,6 @@
 package com.phucnguyen.githubadministrator.common.data.paging
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -64,6 +65,9 @@ class UserPagingSource @Inject constructor(
             }
         }
 
+        Log.d("BeerRemoteMediator", "loadKey: $loadKey")
+        Log.d("BeerRemoteMediator", "loadType: $loadType")
+
         val result = userRemoteDataSource.getUsers(loadKey)
 
         return when (result) {
@@ -74,24 +78,34 @@ class UserPagingSource @Inject constructor(
                 result.exception
             )
             is ResultData.Success -> {
-                cacheUsers(loadType = loadType, users = result.data.body.map { it.toUserEntity() })
+//                cacheUsers(loadType = loadType, users = result.data.body.map { it.toUserEntity() })
+                db.withTransaction {
+                    if (loadType == LoadType.REFRESH) {
+                        userDao.deleteAllUsers()
+                    }
+
+                    userDao.insertUsers(result.data.body.map { it.toUserEntity() })
+                }
 
                 val next = extractNextSinceParameter(result.data.header["link"])
 
-                MediatorResult.Success(
-                    endOfPaginationReached = next == null
+                val result = MediatorResult.Success(
+                    endOfPaginationReached = false
                 )
+
+                Log.d("BeerRemoteMediator", "result: ${result.endOfPaginationReached}")
+                result
             }
         }
     }
 
     private suspend fun cacheUsers(loadType: LoadType, users: List<UserEntity>) {
-            if (loadType == LoadType.REFRESH) {
-                userDao.deleteAllUsers()
-            }
+        db.withTransaction {
+//            if (loadType == LoadType.REFRESH) {
+//                userDao.deleteAllUsers()
+//            }
 
             userDao.insertUsers(users)
-//        db.withTransaction {
-//        }
+        }
     }
 }
