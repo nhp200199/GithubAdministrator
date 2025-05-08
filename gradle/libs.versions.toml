@@ -49,6 +49,7 @@ logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-intercep
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-paging = { group = "androidx.room", name = "room-paging", version.ref = "room" }
 
 #Paging
 paging3 = { group = "androidx.paging", name = "paging-runtime", version.ref = "paging3" }

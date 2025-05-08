@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     //Room database
+    implementation(libs.room.paging)
     implementation (libs.room.runtime)
     implementation (libs.room.ktx)
     ksp(libs.room.compiler)

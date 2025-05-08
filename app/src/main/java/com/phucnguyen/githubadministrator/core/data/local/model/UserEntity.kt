@@ -3,6 +3,7 @@ package com.phucnguyen.githubadministrator.core.data.local.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.phucnguyen.githubadministrator.common.model.UserDetail
+import com.phucnguyen.githubadministrator.common.model.UserOverview
 
 @Entity(tableName = "user")
 data class UserEntity(
@@ -25,6 +26,15 @@ data class UserEntity(
             location = location ?: "",
             followers = followers,
             following = following
+        )
+    }
+
+    fun toUserOverview(): UserOverview {
+        return UserOverview(
+            id = id,
+            userName = userName,
+            avatarUrl = avatarUrl ?: "",
+            landingPageUrl = htmlUrl ?: "",
         )
     }
 }

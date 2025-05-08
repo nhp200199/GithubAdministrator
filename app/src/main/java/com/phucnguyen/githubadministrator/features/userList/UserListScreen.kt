@@ -1,5 +1,6 @@
 package com.phucnguyen.githubadministrator.features.userList
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +22,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -66,6 +68,8 @@ fun UserListScreen(
     ) {
         items(userPagingState.itemCount) { index ->
             userPagingState[index]?.let { user ->
+                Log.d("Phuc", "itemCount = ${userPagingState.itemCount}")
+
                 Card(
                     elevation = CardDefaults.elevatedCardElevation(
                         defaultElevation = 16.dp
