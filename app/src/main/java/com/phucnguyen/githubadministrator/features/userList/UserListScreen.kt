@@ -1,13 +1,14 @@
 package com.phucnguyen.githubadministrator.features.userList
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,26 +20,26 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import com.phucnguyen.githubadministrator.R
 import com.phucnguyen.githubadministrator.common.model.UserOverview
-import com.phucnguyen.githubadministrator.dataTest.USER_LIST_MODEL
+import com.phucnguyen.githubadministrator.common.ui.component.ErrorContainer
 
 @Composable
 fun UserListScreenVM(
@@ -58,90 +59,121 @@ fun UserListScreen(
     userPagingState: LazyPagingItems<UserOverview>,
     onNavigateToDetail: (String) -> Unit
 ) {
-    LazyColumn(
-        contentPadding = PaddingValues(
-            8.dp
-        ),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+    Box(
         modifier = Modifier
             .background(color = Color.White)
+            .fillMaxSize()
     ) {
-        items(userPagingState.itemCount) { index ->
-            userPagingState[index]?.let { user ->
-                Log.d("Phuc", "itemCount = ${userPagingState.itemCount}")
+        val refreshLoadState = userPagingState.loadState.refresh
 
-                Card(
-                    elevation = CardDefaults.elevatedCardElevation(
-                        defaultElevation = 16.dp
-                    ),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color.White
-                    ),
-                    modifier = Modifier
-                        .clickable { onNavigateToDetail(user.userName) }
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .padding(8.dp)
-                    ) {
-                        AsyncImage(
-                            model = user.avatarUrl,
-                            contentDescription = "user avatar",
-                            error = painterResource(id = R.drawable.ic_launcher_background),
-                            placeholder = painterResource(id = R.drawable.ic_launcher_background),
+        when(refreshLoadState) {
+            is LoadState.Error -> ErrorContainer(
+                message = refreshLoadState.error.message ?: "",
+                onRetry = { userPagingState.retry() },
+                modifier = Modifier
+                    .align(Alignment.Center)
+            )
+            LoadState.Loading -> CircularProgressIndicator(
+                modifier = Modifier
+                    .align(Alignment.Center)
+            )
+            is LoadState.NotLoading -> LazyColumn(
+                contentPadding = PaddingValues(
+                    8.dp
+                ),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .background(color = Color.White)
+            ) {
+                items(userPagingState.itemCount) { index ->
+                    userPagingState[index]?.let { user ->
+                        Card(
+                            elevation = CardDefaults.elevatedCardElevation(
+                                defaultElevation = 16.dp
+                            ),
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color.White
+                            ),
                             modifier = Modifier
-                                .size(96.dp)
-                                .clip(CircleShape)
-                        )
-
-                        Column(
-                            modifier = Modifier
-                                .padding(horizontal = 8.dp)
+                                .clickable { onNavigateToDetail(user.userName) }
                         ) {
-                            Text(
-                                text = user.userName,
-                                style = TextStyle(
-                                    fontSize = 18.sp
-                                )
-                            )
-
-                            Spacer(
-                                modifier = Modifier
-                                    .height(8.dp)
-                            )
-
-                            Spacer(
-                                modifier = Modifier
-                                    .height(1.dp)
-                                    .fillMaxWidth()
-                                    .background(color = Color.Gray)
-                            )
-
-                            Spacer(
-                                modifier = Modifier
-                                    .height(8.dp)
-                            )
-
                             Row(
-                                verticalAlignment = Alignment.CenterVertically
+                                modifier = Modifier
+                                    .padding(8.dp)
                             ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.LocationOn,
-                                    contentDescription = "location",
-                                    tint = Color.Gray,
+                                AsyncImage(
+                                    model = user.avatarUrl,
+                                    contentDescription = "user avatar",
+                                    error = painterResource(id = R.drawable.ic_launcher_background),
+                                    placeholder = painterResource(id = R.drawable.ic_launcher_background),
+                                    modifier = Modifier
+                                        .size(96.dp)
+                                        .clip(CircleShape)
                                 )
 
-                                Spacer(modifier = Modifier.width(4.dp))
-
-                                Text(
-                                    text = user.landingPageUrl,
-                                    style = TextStyle(
-                                        fontSize = 14.sp,
-                                        color = Color.Gray
+                                Column(
+                                    modifier = Modifier
+                                        .padding(horizontal = 8.dp)
+                                ) {
+                                    Text(
+                                        text = user.userName,
+                                        style = TextStyle(
+                                            fontSize = 18.sp
+                                        )
                                     )
-                                )
+
+                                    Spacer(
+                                        modifier = Modifier
+                                            .height(8.dp)
+                                    )
+
+                                    Spacer(
+                                        modifier = Modifier
+                                            .height(1.dp)
+                                            .fillMaxWidth()
+                                            .background(color = Color.Gray)
+                                    )
+
+                                    Spacer(
+                                        modifier = Modifier
+                                            .height(8.dp)
+                                    )
+
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.LocationOn,
+                                            contentDescription = "location",
+                                            tint = Color.Gray,
+                                        )
+
+                                        Spacer(modifier = Modifier.width(4.dp))
+
+                                        Text(
+                                            text = user.landingPageUrl,
+                                            style = TextStyle(
+                                                fontSize = 14.sp,
+                                                color = Color.Gray
+                                            )
+                                        )
+                                    }
+                                }
                             }
                         }
+                    }
+                }
+
+                item {
+                    val appendLoadState = userPagingState.loadState.append
+                    when (appendLoadState) {
+                        is LoadState.Error -> ErrorContainer(
+                            message = appendLoadState.error.message ?: "",
+                            onRetry = { userPagingState.retry() }
+                        )
+                        LoadState.Loading -> CircularProgressIndicator()
+                        is LoadState.NotLoading -> Unit
                     }
                 }
             }

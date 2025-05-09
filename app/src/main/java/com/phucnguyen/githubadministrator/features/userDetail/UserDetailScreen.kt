@@ -14,13 +14,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,6 +39,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.phucnguyen.githubadministrator.R
+import com.phucnguyen.githubadministrator.common.model.UserDetail
+import com.phucnguyen.githubadministrator.common.ui.component.ErrorContainer
 import com.phucnguyen.githubadministrator.dataTest.USER_DETAIL_MODEL
 
 @Composable
@@ -55,19 +55,45 @@ fun UserDetailVM(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Log.d("MovieDetail", "uiState = $uiState")
-    UserDetailScreen(uiState)
+    UserDetailScreen(
+        uiState = uiState,
+        onRetry = { viewModel.getUserDetail(userName) }
+    )
 }
 
 @Composable
 fun UserDetailScreen(
     uiState: UserDetailUIState,
+    onRetry: () -> Unit
 ) {
-    val data = if (uiState is UserDetailUIState.Success) uiState.data else USER_DETAIL_MODEL
-
-    Column(
+    Box(
         modifier = Modifier
-            .fillMaxSize()
             .background(color = Color.White)
+            .fillMaxSize()
+    ) {
+        when (uiState) {
+            is UserDetailUIState.Error -> ErrorContainer(
+                message = uiState.message,
+                onRetry = onRetry,
+                modifier = Modifier.align(Alignment.Center)
+            )
+            is UserDetailUIState.Success -> UserDetailContainer(uiState.data)
+            else -> CircularProgressIndicator(
+                modifier = Modifier
+                    .align(Alignment.Center)
+            )
+        }
+    }
+}
+
+@Composable
+private fun UserDetailContainer(
+    data: UserDetail,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
             .padding(horizontal = 8.dp)
     ) {
         UserInfo(
@@ -110,9 +136,6 @@ private fun UserInfo(
             containerColor = Color.White
         ),
         modifier = Modifier
-//            .background(color = Color.White)
-//            .padding(8.dp)
-//            .clip(RoundedCornerShape(12.dp))
     ) {
         Row(
             modifier = Modifier
@@ -283,6 +306,9 @@ private fun BlogSection(
 @Preview
 private fun UserDetailScreenPreview() {
     UserDetailScreen(
-        uiState = UserDetailUIState.Success(USER_DETAIL_MODEL)
+        uiState = UserDetailUIState.Success(USER_DETAIL_MODEL),
+        onRetry = {}
+//        uiState = UserDetailUIState.Error("Something went wrong")
+//        uiState = UserDetailUIState.Initial
     )
 }

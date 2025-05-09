@@ -20,8 +20,11 @@ interface UserDao {
     suspend fun getUserByName(userName: String): UserEntity
 
     @Query("SELECT * FROM user")
-    fun getAllUsers(): PagingSource<Int, UserEntity>
+    fun getAllUsersPaging(): PagingSource<Int, UserEntity>
 
     @Query("DELETE FROM user")
     suspend fun deleteAllUsers()
+
+    @Query("SELECT * FROM user")
+    suspend fun getAllUsers(): List<UserEntity>
 }

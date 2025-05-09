@@ -1,5 +1,6 @@
 package com.phucnguyen.githubadministrator.common.data.paging
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -24,6 +25,8 @@ class UserPagingSource @Inject constructor(
         loadType: LoadType,
         state: PagingState<Int, UserEntity>
     ): MediatorResult {
+        Log.d("UserPagingSource", "loadType = $loadType")
+
         val loadKey = when(loadType) {
             LoadType.REFRESH -> 0
             LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
@@ -51,6 +54,11 @@ class UserPagingSource @Inject constructor(
                 )
             }
         }
+    }
+
+    override suspend fun initialize(): InitializeAction {
+        return if (userDao.getAllUsers().isEmpty()) InitializeAction.LAUNCH_INITIAL_REFRESH
+            else InitializeAction.SKIP_INITIAL_REFRESH
     }
 
     private suspend fun cacheUsers(loadType: LoadType, users: List<UserEntity>) {

@@ -33,7 +33,7 @@ class UserRepository @Inject constructor(
             remoteMediator = userPagingSource
 //            pagingSourceFactory = { userPagingSource }
         ) {
-            userDao.getAllUsers()
+            userDao.getAllUsersPaging()
         }.flow.map {
             it.map { userEntity -> userEntity.toUserOverview() }
         }

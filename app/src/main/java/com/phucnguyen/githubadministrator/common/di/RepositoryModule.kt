@@ -42,7 +42,7 @@ abstract class RepositoryModule {
                     userDao = userDao
                 ),
                 pagingSourceFactory = {
-                    userDao.getAllUsers()
+                    userDao.getAllUsersPaging()
                 }
             )
         }
