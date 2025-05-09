@@ -1,6 +1,5 @@
 package com.phucnguyen.githubadministrator.common.data.paging
 
-import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -21,33 +20,6 @@ class UserPagingSource @Inject constructor(
     private val db: GithubAdminDatabase,
     private val userDao: UserDao
 ) : RemoteMediator<Int, UserEntity>() {
-
-    //    override fun getRefreshKey(state: PagingState<Int, UserOverview>): Int? {
-//        return state.anchorPosition?.let { state.closestItemToPosition(it)?.id }
-//    }
-//
-//    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, UserOverview> {
-//        val since = params.key ?: 0
-//
-//        val result = userRemoteDataSource.getUsers(since = since)
-//        return when (result) {
-//            is ResultData.ApiError -> LoadResult.Error(
-//                ApiRequestException(result.code!!, result.message)
-//            )
-//            is ResultData.OperationError -> LoadResult.Error(
-//                result.exception
-//            )
-//            is ResultData.Success -> {
-//                val next = extractNextSinceParameter(result.data.header["link"])
-//
-//                LoadResult.Page(
-//                    data = result.data.body,
-//                    prevKey = null, // because we only paging forward
-//                    nextKey = next
-//                )
-//            }
-//        }
-//    }
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, UserEntity>
@@ -56,17 +28,9 @@ class UserPagingSource @Inject constructor(
             LoadType.REFRESH -> 0
             LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
             LoadType.APPEND -> {
-                val lastItem = state.lastItemOrNull()
-                if (lastItem == null) {
-                    return MediatorResult.Success(endOfPaginationReached = true)
-                }
-
-                lastItem.id
+                state.lastItemOrNull()?.id ?: 0
             }
         }
-
-        Log.d("BeerRemoteMediator", "loadKey: $loadKey")
-        Log.d("BeerRemoteMediator", "loadType: $loadType")
 
         val result = userRemoteDataSource.getUsers(loadKey)
 
@@ -78,32 +42,22 @@ class UserPagingSource @Inject constructor(
                 result.exception
             )
             is ResultData.Success -> {
-//                cacheUsers(loadType = loadType, users = result.data.body.map { it.toUserEntity() })
-                db.withTransaction {
-                    if (loadType == LoadType.REFRESH) {
-                        userDao.deleteAllUsers()
-                    }
-
-                    userDao.insertUsers(result.data.body.map { it.toUserEntity() })
-                }
+                cacheUsers(loadType = loadType, users = result.data.body.map { it.toUserEntity() })
 
                 val next = extractNextSinceParameter(result.data.header["link"])
 
-                val result = MediatorResult.Success(
-                    endOfPaginationReached = false
+                MediatorResult.Success(
+                    endOfPaginationReached = next == null
                 )
-
-                Log.d("BeerRemoteMediator", "result: ${result.endOfPaginationReached}")
-                result
             }
         }
     }
 
     private suspend fun cacheUsers(loadType: LoadType, users: List<UserEntity>) {
         db.withTransaction {
-//            if (loadType == LoadType.REFRESH) {
-//                userDao.deleteAllUsers()
-//            }
+            if (loadType == LoadType.REFRESH) {
+                userDao.deleteAllUsers()
+            }
 
             userDao.insertUsers(users)
         }
