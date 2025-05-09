@@ -15,11 +15,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,15 +38,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
 import com.phucnguyen.githubadministrator.R
 import com.phucnguyen.githubadministrator.common.model.UserDetail
+import com.phucnguyen.githubadministrator.common.ui.component.ClickableUrlText
 import com.phucnguyen.githubadministrator.common.ui.component.ErrorContainer
+import com.phucnguyen.githubadministrator.common.ui.component.UserCard
 import com.phucnguyen.githubadministrator.dataTest.USER_DETAIL_MODEL
 
 @Composable
 fun UserDetailVM(
     userName: String,
+    onNavigateBack: () -> Unit,
     viewModel: UserDetailViewModel = hiltViewModel()
 ) {
     LaunchedEffect(Unit) {
@@ -57,31 +60,56 @@ fun UserDetailVM(
     Log.d("MovieDetail", "uiState = $uiState")
     UserDetailScreen(
         uiState = uiState,
-        onRetry = { viewModel.getUserDetail(userName) }
+        onRetry = { viewModel.getUserDetail(userName) },
+        onNavigateBack = onNavigateBack
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserDetailScreen(
     uiState: UserDetailUIState,
-    onRetry: () -> Unit
+    onRetry: () -> Unit,
+    onNavigateBack: () -> Unit
 ) {
-    Box(
+    Column(
         modifier = Modifier
-            .background(color = Color.White)
             .fillMaxSize()
     ) {
-        when (uiState) {
-            is UserDetailUIState.Error -> ErrorContainer(
-                message = uiState.message,
-                onRetry = onRetry,
-                modifier = Modifier.align(Alignment.Center)
-            )
-            is UserDetailUIState.Success -> UserDetailContainer(uiState.data)
-            else -> CircularProgressIndicator(
-                modifier = Modifier
-                    .align(Alignment.Center)
-            )
+        CenterAlignedTopAppBar(
+            title = {
+                Text(text = "User Detail")
+            },
+            navigationIcon = {
+                IconButton(
+                    onClick = onNavigateBack
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "back",
+                    )
+                }
+            }
+        )
+
+        Box(
+            modifier = Modifier
+                .background(color = Color.White)
+                .weight(99f)
+                .fillMaxWidth()
+        ) {
+            when (uiState) {
+                is UserDetailUIState.Error -> ErrorContainer(
+                    message = uiState.message,
+                    onRetry = onRetry,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+                is UserDetailUIState.Success -> UserDetailContainer(uiState.data)
+                else -> CircularProgressIndicator(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                )
+            }
         }
     }
 }
@@ -96,11 +124,40 @@ private fun UserDetailContainer(
             .fillMaxSize()
             .padding(horizontal = 8.dp)
     ) {
-        UserInfo(
-            userName = data.userName,
+        UserCard(
             avatarUrl = data.avatarUrl,
-            location = data.location
-        )
+            userName = data.userName
+        ) {
+            if (data.location.isEmpty()) {
+                Text(
+                    text = "No location",
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        color = Color.Gray
+                    )
+                )
+            } else {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.LocationOn,
+                        contentDescription = "location",
+                        tint = Color.Gray,
+                    )
+
+                    Spacer(modifier = Modifier.width(4.dp))
+
+                    Text(
+                        text = data.location,
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            color = Color.Gray
+                        )
+                    )
+                }
+            }
+        }
 
         Spacer(
             modifier = Modifier.height(16.dp)
@@ -119,87 +176,6 @@ private fun UserDetailContainer(
         BlogSection(
             blogUrl = data.landingPageUrl
         )
-    }
-}
-
-@Composable
-private fun UserInfo(
-    userName: String,
-    avatarUrl: String,
-    location: String
-) {
-    Card(
-        elevation = CardDefaults.elevatedCardElevation(
-            defaultElevation = 16.dp
-        ),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        ),
-        modifier = Modifier
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(8.dp)
-        ) {
-            AsyncImage(
-                model = avatarUrl,
-                contentDescription = "user avatar",
-                error = painterResource(id = R.drawable.ic_launcher_background),
-                placeholder = painterResource(id = R.drawable.ic_launcher_background),
-                modifier = Modifier
-                    .size(96.dp)
-                    .clip(CircleShape)
-            )
-
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-            ) {
-                Text(
-                    text = userName,
-                    style = TextStyle(
-                        fontSize = 18.sp
-                    )
-                )
-
-                Spacer(
-                    modifier = Modifier
-                        .height(8.dp)
-                )
-
-                Spacer(
-                    modifier = Modifier
-                        .height(1.dp)
-                        .fillMaxWidth()
-                        .background(color = Color.Gray)
-                )
-
-                Spacer(
-                    modifier = Modifier
-                        .height(8.dp)
-                )
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.LocationOn,
-                        contentDescription = "location",
-                        tint = Color.Gray,
-                    )
-
-                    Spacer(modifier = Modifier.width(4.dp))
-
-                    Text(
-                        text = location,
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            color = Color.Gray
-                        )
-                    )
-                }
-            }
-        }
     }
 }
 
@@ -291,13 +267,8 @@ private fun BlogSection(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        //TODO: make this text clickable
-        Text(
-            text = blogUrl,
-            style = TextStyle(
-                fontSize = 14.sp,
-                color = Color.Gray
-            )
+        ClickableUrlText(
+            text = blogUrl
         )
     }
 }
@@ -307,7 +278,8 @@ private fun BlogSection(
 private fun UserDetailScreenPreview() {
     UserDetailScreen(
         uiState = UserDetailUIState.Success(USER_DETAIL_MODEL),
-        onRetry = {}
+        onRetry = {},
+        onNavigateBack = {}
 //        uiState = UserDetailUIState.Error("Something went wrong")
 //        uiState = UserDetailUIState.Initial
     )
