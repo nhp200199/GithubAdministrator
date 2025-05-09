@@ -9,9 +9,9 @@ import javax.inject.Inject
 class UserLocalDataSource @Inject constructor(
     private val userDao: UserDao
 ) : IUserLocalDataSource {
-    override suspend fun insertUser(user: UserEntity): ResultData<Unit> {
+    override suspend fun updateUser(user: UserEntity): ResultData<Unit> {
         return try {
-            userDao.insertUser(user)
+            userDao.updateUser(user)
             ResultData.Success(Unit)
         } catch (e: Exception) {
             ResultData.OperationError(e)
@@ -21,7 +21,11 @@ class UserLocalDataSource @Inject constructor(
     override suspend fun getUserByName(userName: String): ResultData<UserDetail> {
         return try {
             val user = userDao.getUserByName(userName)
-            ResultData.Success(user.toUserDetail())
+            if (user.detailFetched) {
+                ResultData.Success(user.toUserDetail())
+            } else {
+                ResultData.ApiError("User detail not fetched")
+            }
         } catch (e: Exception) {
             ResultData.OperationError(e)
         }

@@ -9,7 +9,7 @@ sealed class ResultData<out T : Any> {
     /**
      * Failure response with body
      */
-    data class ApiError(val message: String, val code: Int?) : ResultData<Nothing>()
+    data class ApiError(val message: String, val code: Int? = null) : ResultData<Nothing>()
 
     data class OperationError(val exception: Exception): ResultData<Nothing>()
 

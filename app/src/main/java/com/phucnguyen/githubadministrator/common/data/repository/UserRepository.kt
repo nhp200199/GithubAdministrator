@@ -49,7 +49,7 @@ class UserRepository @Inject constructor(
 
         return when (result) {
             is ResultData.Success -> {
-                userLocalDataSource.insertUser(
+                userLocalDataSource.updateUser(
                     result.data.body.toUserEntity().copy(detailFetched = true)
                 )
                 ResultData.Success(result.data.body)
