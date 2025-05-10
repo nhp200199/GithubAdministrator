@@ -33,7 +33,6 @@ fun extractNextSinceParameter(linkHeader: String?): Int? {
     return null
 }
 
-// Safe API call handler with suspend
 suspend fun <T: Any> safeApiCall(apiCall: suspend () -> Response<T>): ResultData<NetworkResponse<T>> {
     return try {
         val response = apiCall()
@@ -42,33 +41,16 @@ suspend fun <T: Any> safeApiCall(apiCall: suspend () -> Response<T>): ResultData
                 response.body()?.let { ResultData.Success(NetworkResponse(response.headers(), it)) }
                     ?: ResultData.ApiError("Empty response body", response.code())
             }
-            else -> ResultData.ApiError(response.message(), response.code())
+            else -> ResultData.ApiError(response.errorBody()?.string() ?: "Unknown error", response.code())
         }
     } catch (exception: Throwable) {
         handleApiError(exception)
     }
 }
 
-// Exception handling with detailed Resource.Error
 private fun <T: Any> handleApiError(exception: Throwable): ResultData<T> {
     return when (exception) {
-//        is TimeoutException -> "Request timed out. Please try again."
         is IOException -> ResultData.OperationError(NoNetworkConnectionException())
-//        is HttpException -> {
-//            val statusCode = exception.code()
-//            when (statusCode) {
-//                400 -> "Bad Request"
-//                401 -> "Unauthorized. Please check your credentials."
-//                403 -> "Forbidden. Access is denied."
-//                404 -> "Resource not found."
-//                500 -> "Internal Server Error. Please try again later."
-//                503 -> "Service Unavailable. Please try again later."
-//                else -> "Unexpected HTTP Error: $statusCode"
-//            }
-//        }
-//        is JsonParseException, is MalformedJsonException -> "Malformed JSON received. Parsing failed."
-//        is IllegalArgumentException -> "Invalid argument provided. ${exception.message}"
-//        is IllegalStateException -> "Illegal application state. ${exception.message}"
         else -> ResultData.OperationError(UnknownException())
     }
 }
