@@ -15,6 +15,12 @@ import com.phucnguyen.githubadministrator.core.data.local.model.UserEntity
 import com.phucnguyen.githubadministrator.core.data.local.room.GithubAdminDatabase
 import javax.inject.Inject
 
+/**
+ * Handles fetching and caching GitHub users for Paging 3.
+ *
+ * This class fetches user data from a remote source and stores it in a local database.
+ * It works with Paging 3 to load data efficiently as the user scrolls.
+ */
 @OptIn(ExperimentalPagingApi::class)
 class UserPagingSource @Inject constructor(
     private val userRemoteDataSource: IUserRemoteDataSource,
@@ -56,11 +62,21 @@ class UserPagingSource @Inject constructor(
         }
     }
 
+    /**
+     * Determines the initial load behavior.
+     *
+     * If the database is empty, it triggers a network refresh. Otherwise, it uses existing data.
+     */
     override suspend fun initialize(): InitializeAction {
         return if (userDao.getAllUsers().isEmpty()) InitializeAction.LAUNCH_INITIAL_REFRESH
-            else InitializeAction.SKIP_INITIAL_REFRESH
+        else InitializeAction.SKIP_INITIAL_REFRESH
     }
 
+    /**
+     * Saves users to the database.
+     *
+     * Clears the database on refresh, otherwise just inserts.
+     */
     private suspend fun cacheUsers(loadType: LoadType, users: List<UserEntity>) {
         db.withTransaction {
             if (loadType == LoadType.REFRESH) {
