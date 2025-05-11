@@ -17,27 +17,30 @@ class UserRemoteDataSource @Inject constructor(
     ): ResultData<NetworkResponse<List<UserOverview>>> {
         val result = safeApiCall { userService.getUsers(since, perPage) }
 
-        //TODO: handle 304 code
-        return when (result) {
-            is ResultData.Success -> ResultData.Success(
-                NetworkResponse(
-                    result.data.header,
-                    result.data.body.map { it.toUserOverview() }
-                )
-            )
-            is ResultData.ApiError -> result
-            is ResultData.OperationError -> result
-        }
+        return handleNetworkResult(
+            result = result,
+            mapper = { users -> users.map { it.toUserOverview() } }
+        )
     }
 
     override suspend fun getUserDetail(userName: String): ResultData<NetworkResponse<UserDetail>> {
         val result = safeApiCall { userService.getUserDetail(userName) }
 
+        return handleNetworkResult(
+            result = result,
+            mapper = { it.toUserDetail() }
+        )
+    }
+
+    private fun <T: Any, R: Any> handleNetworkResult(
+        result: ResultData<NetworkResponse<T>>,
+        mapper: (T) -> R
+    ): ResultData<NetworkResponse<R>> {
         return when (result) {
             is ResultData.Success -> ResultData.Success(
                 NetworkResponse(
                     result.data.header,
-                    result.data.body.toUserDetail()
+                    mapper(result.data.body)
                 )
             )
             is ResultData.ApiError -> result

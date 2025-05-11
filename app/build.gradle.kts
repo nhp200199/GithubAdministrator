@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -20,6 +22,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val props = Properties()
+        props.load(project.rootProject.file("local.properties").inputStream())
+
+        buildConfigField("String", "HOST", "\"${props["HOST"]}\"")
     }
 
     buildTypes {
@@ -40,6 +47,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 

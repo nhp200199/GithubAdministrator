@@ -3,6 +3,7 @@ package com.phucnguyen.githubadministrator.common.di
 import android.content.Context
 import androidx.room.Room
 import com.phucnguyen.githubadministrator.core.data.local.dao.UserDao
+import com.phucnguyen.githubadministrator.core.data.local.room.DB_NAME
 import com.phucnguyen.githubadministrator.core.data.local.room.GithubAdminDatabase
 import dagger.Module
 import dagger.Provides
@@ -20,7 +21,7 @@ object DatabaseModule {
         return Room.databaseBuilder(
             context.applicationContext,
             GithubAdminDatabase::class.java,
-            "github_admin_database"
+            DB_NAME
         ).build()
     }
 

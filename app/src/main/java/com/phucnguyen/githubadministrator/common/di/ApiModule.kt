@@ -1,6 +1,7 @@
 package com.phucnguyen.githubadministrator.common.di
 
 import android.content.Context
+import com.phucnguyen.githubadministrator.BuildConfig
 import com.phucnguyen.githubadministrator.core.data.remote.retrofit.NetworkMonitorInterceptor
 import com.phucnguyen.githubadministrator.core.data.remote.service.IUserService
 import com.phucnguyen.githubadministrator.core.networkManager.NetworkManager
@@ -25,10 +26,9 @@ abstract class ApiModule {
         fun retrofit(
             okHttpClient: OkHttpClient
         ): Retrofit = Retrofit.Builder()
-            .baseUrl("https://api.github.com/")
+            .baseUrl(BuildConfig.HOST)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
-//            .addCallAdapterFactory(NetworkAdapterFactory())
             .build()
 
         @Provides
