@@ -39,8 +39,6 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation-compose"}
 
-mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
-
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
 
 logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "ok-http3" }
@@ -69,6 +67,8 @@ dagger-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", ve
 hilt-navigation-compose = { group ="androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-navigation-compose"}
 
 #Testing
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 
